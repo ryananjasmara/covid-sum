@@ -7,6 +7,7 @@ const APP_DESCRIPTION =
 const DATASOURCE = 'Datasource :';
 const APP_SOURCE_LINK = 'coronavirus-tracker-api.herokuapp.com';
 const SUMMARY_CARD_HEADER = 'Latest Worldwide Statistic';
+const CHART_HEADER = 'Graph Per Countries';
 
 export default {
   CONFIRMED,
@@ -17,4 +18,5 @@ export default {
   APP_SOURCE_LINK,
   DATASOURCE,
   SUMMARY_CARD_HEADER,
+  CHART_HEADER,
 };
