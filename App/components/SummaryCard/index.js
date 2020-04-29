@@ -6,6 +6,10 @@ import {GRAY, ORANGE, RED, GREEN} from '../../configs/colors';
 import {MoodBad, MoodGood, SentimentDissatisfied} from '../../assets/icons';
 
 const SummaryCard = ({data}) => {
+  if (!data) {
+    return null;
+  }
+
   const {confirmed, deaths, recovered} = data;
 
   return (
