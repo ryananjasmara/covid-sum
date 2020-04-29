@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import {StyleSheet, View, Text, Dimensions} from 'react-native';
@@ -7,6 +8,10 @@ import {thousandSeparator} from '../../helpers';
 import WORDS from '../../configs/words';
 
 const Chart = ({data}) => {
+  if (!data) {
+    return null;
+  }
+
   const [selectedCategories, setSelectedCategories] = React.useState(
     WORDS.CONFIRMED,
   );
