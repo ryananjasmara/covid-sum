@@ -1,4 +1,5 @@
 ## COVID - 19 Summary Statistic Monitoring Apps
+Download APK Here : [LINK](https://drive.google.com/open?id=167afi5PN63iIcfcT1iNaZ-fJwEKL9WKW)
 
 ## How To Install
 1. Clone this project using `git clone` or else.
