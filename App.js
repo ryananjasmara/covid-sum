@@ -1,113 +1,142 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
+import Spinner from './App/components/Spinner';
+import Chart from './App/components/Chart';
+import WORDS from './App/configs/words';
+import {GRAY, BLUE} from './App/configs/colors';
+import {openLinkInOtherApp} from './App/helpers';
+import SummaryCard from './App/components/SummaryCard';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const App = () => {
+  const [isFetching, setFetching] = React.useState(false);
+  const [isRefreshing, setRefreshing] = React.useState(false);
+  const [statisticData, setStatisticData] = React.useState();
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
+  React.useEffect(() => {
+    getAllCategories();
+  }, []);
+
+  async function getAllCategories() {
+    try {
+      setFetching(true);
+      const response = await fetch(
+        'https://coronavirus-tracker-api.herokuapp.com/all',
+      );
+      const json = await response.json();
+      setStatisticData(json);
+      setFetching(false);
+    } catch (error) {
+      Alert.alert('Something went wrong', 'Sorry, fetch from api failed', [
+        {text: 'Try Again', onPress: () => getAllCategories()},
+      ]);
+    }
+  }
+
+  function onSourcePressed() {
+    const url = 'https://coronavirus-tracker-api.herokuapp.com';
+    openLinkInOtherApp(url);
+  }
+
+  if (statisticData && !isFetching) {
+    return (
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            color="blue"
+            tintColor="blue"
+            refreshing={isRefreshing}
+            onRefresh={() => getAllCategories()}
+          />
+        }>
+        <View style={styles.app}>
+          {/* App Name / Title */}
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitleText}>{WORDS.HEADER_TITLE}</Text>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
+          {/* App Description */}
+          <View style={styles.appDescriptionContainer}>
+            <Text style={styles.appDescriptionText}>
+              {WORDS.APP_DESCRIPTION}
+            </Text>
+            <Text style={styles.appSourceText}>{WORDS.DATASOURCE}</Text>
+            <TouchableOpacity onPress={() => onSourcePressed()}>
+              <Text style={styles.appSourceLink}>{WORDS.APP_SOURCE_LINK}</Text>
+            </TouchableOpacity>
+          </View>
+          {/* SummaryCard */}
+          <View style={styles.summaryCardContainer}>
+            <View style={styles.headerTitleContainer}>
+              <Text style={styles.headerTitleText}>
+                {WORDS.SUMMARY_CARD_HEADER}
+              </Text>
+            </View>
+            <SummaryCard data={statisticData.latest} />
+          </View>
+          {/* Chart */}
+          <Chart data={statisticData} />
+        </View>
+      </ScrollView>
+    );
+  } else {
+    return (
+      <View style={styles.spinner}>
+        <Spinner />
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  spinner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  app: {
+    marginTop: 10,
+    marginHorizontal: 18,
   },
-  body: {
-    backgroundColor: Colors.white,
+  headerTitleContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
+  headerTitleText: {
     fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
+    fontWeight: 'bold',
   },
-  highlight: {
-    fontWeight: '700',
+  appDescriptionContainer: {
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#d9d9d9',
   },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  appDescriptionText: {
+    color: GRAY,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  appSourceText: {
+    color: GRAY,
+    textAlign: 'center',
+  },
+  appSourceLink: {
+    color: BLUE,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
+  chart: {
+    marginVertical: 8,
+    borderRadius: 16,
+  },
+  summaryCardContainer: {
+    marginBottom: 10,
   },
 });
 
