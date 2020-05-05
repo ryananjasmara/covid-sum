@@ -6,6 +6,7 @@ import {Picker} from '@react-native-community/picker';
 import {LineChart} from 'react-native-chart-kit';
 import {thousandSeparator} from '../../helpers';
 import WORDS from '../../configs/words';
+import { ORANGE_ALT_1, ORANGE_ALT_2, ORANGE_ALT_3 } from '../../configs/colors';
 
 const Chart = ({data}) => {
   if (!data) {
@@ -122,9 +123,9 @@ const Chart = ({data}) => {
         height={220}
         yAxisInterval={1}
         chartConfig={{
-          backgroundColor: '#e26a00',
-          backgroundGradientFrom: '#fb8c00',
-          backgroundGradientTo: '#ffa726',
+          backgroundColor: ORANGE_ALT_1,
+          backgroundGradientFrom: ORANGE_ALT_2,
+          backgroundGradientTo: ORANGE_ALT_3,
           decimalPlaces: 2,
           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -132,7 +133,7 @@ const Chart = ({data}) => {
           propsForDots: {
             r: '6',
             strokeWidth: '2',
-            stroke: '#ffa726',
+            stroke: ORANGE_ALT_3,
           },
         }}
         bezier
