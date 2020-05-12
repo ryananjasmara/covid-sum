@@ -6,7 +6,7 @@ import {Picker} from '@react-native-community/picker';
 import {LineChart} from 'react-native-chart-kit';
 import {thousandSeparator} from '../../helpers';
 import WORDS from '../../configs/words';
-import { ORANGE_ALT_1, ORANGE_ALT_2, ORANGE_ALT_3 } from '../../configs/colors';
+import {ORANGE_ALT_1, ORANGE_ALT_2, ORANGE_ALT_3} from '../../configs/colors';
 
 const Chart = ({data}) => {
   if (!data) {
@@ -41,7 +41,11 @@ const Chart = ({data}) => {
 
   React.useEffect(() => {
     const specificCountry = countriesList.find((item) => {
-      return item.country === selectedCountries;
+      let label = item.country;
+      if (item.province) {
+        label = `${item.country} - ${item.province}`;
+      }
+      return label === selectedCountries;
     });
     setChartData(specificCountry);
   }, [selectedCountries, countriesList]);
@@ -70,13 +74,11 @@ const Chart = ({data}) => {
           setSelectedCountries(itemValue);
         }}>
         {countriesList.map((item, index) => {
-          return (
-            <Picker.Item
-              key={index}
-              label={item.country}
-              value={item.country}
-            />
-          );
+          let label = item.country;
+          if (item.province) {
+            label = `${item.country} - ${item.province}`;
+          }
+          return <Picker.Item key={index} label={label} value={label} />;
         })}
       </Picker>
     );
